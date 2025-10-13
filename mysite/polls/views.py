@@ -47,8 +47,8 @@ def vote(request, question_id):
         # user hits the Back button.
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
 
-# from django.http import HttpRequest, HttpResponse
-# def owner(request: HttpRequest) -> HttpResponse:
-#     response = HttpResponse()
-#     response.write("Hello, world. 6648b1ab is the polls index.")
-#     return response
+from django.http import HttpRequest, HttpResponse
+def owner(request: HttpRequest) -> HttpResponse:
+    response = HttpResponse()
+    response.write("Hello, world. 6648b1ab is the polls index.")
+    return response
