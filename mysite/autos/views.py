@@ -118,3 +118,6 @@ class AutoDelete(LoginRequiredMixin, DeleteView):
 
 # https://docs.djangoproject.com/en/4.2/ref/class-based-views/generic-editing/#createview
 
+
+
+
