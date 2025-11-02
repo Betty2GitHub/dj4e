@@ -30,3 +30,4 @@ class Auto(models.Model):
 
 
 
+

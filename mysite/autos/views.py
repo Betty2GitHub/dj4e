@@ -121,3 +121,4 @@ class AutoDelete(LoginRequiredMixin, DeleteView):
 
 
 
+
