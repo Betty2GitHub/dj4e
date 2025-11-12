@@ -106,7 +106,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'xinyih$market',
         'USER': 'xinyih',
-        'PASSWORD': 'xinyih', 
+        'PASSWORD': 'car2003eer@MYSQL', 
         'HOST': 'xinyih.mysql.pythonanywhere-services.com',
          'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
