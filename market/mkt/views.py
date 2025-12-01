@@ -3,15 +3,28 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.db.utils import IntegrityError
 
-from mkt.models import Ad, Comment
+from mkt.models import Ad, Comment, Fav
 from mkt.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
 from mkt.forms import CreateForm, CommentForm
 
 class AdListView(OwnerListView):
     model = Ad
-    # By convention:
-    # template_name = "mkt/ad_list.html"
+    template_name = "mkt/ad_list.html"
+
+    def get(self, request) :
+        ad_list = Ad.objects.all()
+        favorites = list()
+        if request.user.is_authenticated:
+            # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
+            rows = request.user.favorite_ads.values('id')
+            # favorites = [2, 4, ...] using list comprehension
+            favorites = [ row['id'] for row in rows ]
+        ctx = {'ad_list' : ad_list, 'favorites': favorites}
+        return render(request, self.template_name, ctx)
 
 class AdDetailView(OwnerDetailView):
     model = Ad
@@ -86,6 +99,19 @@ class CommentDeleteView(OwnerDeleteView):
     def get_success_url(self):
         ad = self.object.ad
         return reverse('mkt:detail', args=[ad.id])
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ToggleFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        print("Add PK",pk)
+        t = get_object_or_404(Ad, id=pk)
+        fav = Fav(user=request.user, ad=t)
+        try:
+            fav.save()  # In case of duplicate key
+            return HttpResponse()
+        except IntegrityError:
+            Fav.objects.get(user=request.user, ad=t).delete()
+            return HttpResponse()
 
 def stream_file(request, pk):
     ad = get_object_or_404(Ad, id=pk)
